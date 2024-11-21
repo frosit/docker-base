@@ -20,8 +20,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Version
 ARG \
-    BASHIO_VERSION \
-    TEMPIO_VERSION \
     S6_OVERLAY_VERSION
 
 # Base system
@@ -58,16 +56,6 @@ RUN \
         | tar Jxvf - -C / \
     && mkdir -p /etc/fix-attrs.d \
     && mkdir -p /etc/services.d \
-    \
-    && curl -L -f -s -o /usr/bin/tempio \
-        "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" \
-    && chmod a+x /usr/bin/tempio \
-    \
-    && mkdir -p /usr/src/bashio \
-    && curl -L -f -s "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
-        | tar -xzf - --strip 1 -C /usr/src/bashio \
-    && mv /usr/src/bashio/lib /usr/lib/bashio \
-    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
     \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/src/*

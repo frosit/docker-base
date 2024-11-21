@@ -13,16 +13,13 @@ ENV \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
     S6_CMD_WAIT_FOR_SERVICES=1 \
-    S6_SERVICES_READYTIME=50 \
-    UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux-index/"
+    S6_SERVICES_READYTIME=50 
 
 # Set shell
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 # Build Args
 ARG \
-    BASHIO_VERSION \
-    TEMPIO_VERSION \
     S6_OVERLAY_VERSION \
     JEMALLOC_VERSION \
     QEMU_CPU
@@ -76,16 +73,6 @@ RUN \
         --with-lg-page=16 \
     && make -j "$(nproc)" \
     && make install_lib_shared install_bin \
-    \
-    && mkdir -p /usr/src/bashio \
-    && curl -L -f -s "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
-        | tar -xzf - --strip 1 -C /usr/src/bashio \
-    && mv /usr/src/bashio/lib /usr/lib/bashio \
-    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
-    \
-    && curl -L -f -s -o /usr/bin/tempio \
-        "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" \
-    && chmod a+x /usr/bin/tempio \
     \
     && apk del .build-deps \
     && rm -rf /usr/src/*

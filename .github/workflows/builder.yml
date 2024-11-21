@@ -9,10 +9,7 @@ on:
 env:
   BUILD_TYPE: base
   ALPINE_LATEST: "3.20"
-  DEBIAN_LATEST: "bookworm"
   UBUNTU_LATEST: "20.4"
-  RASPBIAN_LATEST: "bullseye"
-  PYTHON_LATEST: "3.13"
 
 jobs:
   init:
@@ -20,9 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       architectures_alpine: ${{ steps.info_alpine.outputs.architectures }}
-      architectures_debian: ${{ steps.info_debian.outputs.architectures }}
       architectures_ubuntu: ${{ steps.info_ubuntu.outputs.architectures }}
-      architectures_raspbian: ${{ steps.info_raspbian.outputs.architectures }}
       release: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout the repository
@@ -36,23 +31,12 @@ jobs:
         with:
           path: "${{ github.workspace }}/alpine"
 
-      - name: Get information Debian
-        id: info_debian
-        uses: home-assistant/actions/helpers/info@master
-        with:
-          path: "${{ github.workspace }}/debian"
 
       - name: Get information Ubuntu
         id: info_ubuntu
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "${{ github.workspace }}/ubuntu"
-
-      - name: Get information Raspbian
-        id: info_raspbian
-        uses: home-assistant/actions/helpers/info@master
-        with:
-          path: "${{ github.workspace }}/raspbian"
 
       - name: Get version
         id: version
@@ -103,8 +87,6 @@ jobs:
             --cosign \
             --release ${{ needs.init.outputs.release }} \
             --base ${{ matrix.version }}
-
-  build_debian:
     name: Build ${{ matrix.arch }} debian ${{ matrix.version }} base image
     needs: init
     runs-on: ubuntu-latest
@@ -193,7 +175,6 @@ jobs:
             --release ${{ needs.init.outputs.release }} \
             --base ${{ matrix.version }}
 
-  build_raspbian:
     name: Build ${{ matrix.arch }} raspbian ${{ matrix.version }} base image
     needs: init
     runs-on: ubuntu-latest
@@ -238,7 +219,7 @@ jobs:
             --version-from ${{ matrix.version }}-slim \
             --base ${{ matrix.version }}
 
-  build_python:
+
     name: Build ${{ matrix.arch }} alpine ${{ matrix.version }} - python ${{ matrix.python }} base image
     needs: [init, build_alpine]
     runs-on: ubuntu-latest
